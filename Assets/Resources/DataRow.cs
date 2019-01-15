@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DataRow
 {
-    // Year,Prison population total,Prison population rate
+    // Year, Prison population rate
     public int year;
     public int rate;
 }
