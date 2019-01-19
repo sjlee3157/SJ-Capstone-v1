@@ -99,15 +99,25 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // always move along the camera forward as it is the direction that it being aimed at
             Vector3 desiredMove = transform.forward*m_Input.y + transform.right*m_Input.x;
 
-            // get a normal for the surface that is being touched to move along it
-            RaycastHit hitInfo;
-            Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
-                               m_CharacterController.height/2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
-            desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+            // if desired move would not result in a fall, set MoveDir
+            if (Physics.Raycast(transform.position + desiredMove, Vector3.down, m_CharacterController.height))
+            {
+                // get a normal for the surface that is being touched to move along it
+                RaycastHit hitInfo;
+                Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
+                                   m_CharacterController.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
 
-            m_MoveDir.x = desiredMove.x*speed;
-            m_MoveDir.z = desiredMove.z*speed;
-
+                desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+                m_MoveDir.x = desiredMove.x*speed;
+                m_MoveDir.z = desiredMove.z*speed;
+            }
+            // otherwise, don't let character move
+            // TODO: force character to "slide" along edge using vector components?
+            else
+            {
+                m_MoveDir.x = 0f;
+                m_MoveDir.z = 0f;
+            }
 
             if (m_CharacterController.isGrounded)
             {
