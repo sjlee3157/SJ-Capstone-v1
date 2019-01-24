@@ -10,13 +10,13 @@ public class LoadUSData : MonoBehaviour
 
     // Global scale
     static int xPartition = 10; // Split graph into 10 years per wall. Must use int (relies on integer division).
-    static float rampSize = 5f; // Z-axis
+    static float rampSize = 15f; // Z-axis
     float xShift = rampSize;
     static float graphWidth = 100f - (rampSize * 2);
     float xOffset;
     float xMax;
     float xRange;
-    static float graphHeight = 100f;
+    static float graphHeight = 90f;
     float yOffset;
     float yMax;
     float yRange;
@@ -27,7 +27,6 @@ public class LoadUSData : MonoBehaviour
     float xLocalRange;
 
     // Prefabs, Materials, etc.
-    [SerializeField] private GameObject DataBallPrefab;
     [SerializeField] private Material DotConnectionRampMaterial;
 
     // Showing graph
@@ -41,8 +40,6 @@ public class LoadUSData : MonoBehaviour
     List<CombineInstance> combines;
 
     // References
-    Transform dotContainer;
-
     Transform Tower_Wall_1_North;
     Transform Tower_Wall_2_East;
     Transform Tower_Wall_3_South;
@@ -56,8 +53,6 @@ public class LoadUSData : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        dotContainer = GameObject.Find("dotContainer").GetComponent<Transform>();
-
         Tower_Wall_1_North = GameObject.Find("Tower_Wall_1_North").GetComponent<Transform>();
         Tower_Wall_2_East = GameObject.Find("Tower_Wall_2_East").GetComponent<Transform>();
         Tower_Wall_3_South = GameObject.Find("Tower_Wall_3_South").GetComponent<Transform>();
@@ -71,7 +66,6 @@ public class LoadUSData : MonoBehaviour
         LoadData();
         SetGlobalScale();
         WallifyData();
-        PlotDataBalls();
         GenerateRamp();
     }
 
@@ -80,6 +74,7 @@ public class LoadUSData : MonoBehaviour
         // TextAssets are READ-ONLY - like a prefab.
         TextAsset unitedStatesAmerica = Resources.Load<TextAsset>("unitedStatesAmerica");
         string[] rawCSVData = unitedStatesAmerica.text.Split('\n');
+
         for (int i = 1; i < rawCSVData.Length; i++) 
         { // Start at index 1 to skip the header row
             string[] csvRow = rawCSVData[i].Split(',');
@@ -91,6 +86,7 @@ public class LoadUSData : MonoBehaviour
                 DataRow r = new DataRow();
                 int.TryParse(csvRow[0], out r.year);
                 int.TryParse(csvRow[2], out r.rate);
+
                 dataRows.Add(r);
             }
         }
@@ -99,23 +95,12 @@ public class LoadUSData : MonoBehaviour
      void SetGlobalScale() 
      {
         xOffset = 0 - dataRows[0].year;
-        xRange = MaxYear(dataRows) - dataRows[0].year;
+        xRange = dataRows[dataRows.Count - 1].year - dataRows[0].year;
 
         yOffset = 0 - dataRows[0].rate;
-        yRange = MaxRate(dataRows) - dataRows[0].rate;
-    }
 
-    float MaxYear(List<DataRow> dataRows) 
-    {
-        float max = 0;
-        foreach (DataRow r in dataRows) 
-        {
-            if (r.year > max) 
-            {
-                max = r.year;
-            }
-        }
-        return max;
+        yRange = MaxRate(dataRows) - MinRate(dataRows);
+        // Debug.Log(MinRate(dataRows));
     }
 
     float MaxRate(List<DataRow> dataRows) 
@@ -129,6 +114,19 @@ public class LoadUSData : MonoBehaviour
             }
         }
         return max;
+    }
+
+    float MinRate(List<DataRow> dataRows) 
+    {
+        float min = dataRows[0].rate;
+        foreach (DataRow r in dataRows) 
+        {
+            if (r.rate < min) 
+            {
+                min = r.rate;
+            }
+        }
+        return min;
     }
 
     void WallifyData()
@@ -148,27 +146,27 @@ public class LoadUSData : MonoBehaviour
                 walls[0].Add(dataRows[i]);
             }
             else {
-                int wallNumber = ((dataRows[i].year - dataRows[0].year) / xPartition) + 1;
+                int wallNumber = (((dataRows[i].year - dataRows[0].year) -1) / xPartition) + 1;
                 List<DataRow> wall = walls[wallNumber];
                 wall.Add(dataRows[i]);
             }
         }
     }
 
-    void PlotDataBalls() {
-        // Plot all data points on north wall (for reference)
-        for (int i = 0; i < dataRows.Count; i++) 
-        {
-            DataRow r = dataRows[i];
-            xCoord = xShift + (((r.year + xOffset) / xRange) * graphWidth);
-            yCoord = ((r.rate + yOffset) / yRange) * graphHeight;
+    // void PlotDataBalls() {
+    //     // Plot all data points on north wall (for reference)
+    //     for (int i = 0; i < dataRows.Count; i++) 
+    //     {
+    //         DataRow r = dataRows[i];
+    //         xCoord = xShift + (((r.year + xOffset) / xRange) * graphWidth);
+    //         yCoord = ((r.rate + yOffset) / yRange) * graphHeight;
 
-            // Plot the data points
-            GameObject dataBall = Instantiate(DataBallPrefab, new Vector3(xCoord, yCoord, 0), Quaternion.identity);
-            dataBall.transform.SetParent(dotContainer);
-            dataBall.name = $"DataBall {r.year}, {r.rate}";
-        }
-    }
+    //         // Plot the data points
+    //         GameObject dataBall = Instantiate(DataBallPrefab1, new Vector3(xCoord, yCoord, 0), Quaternion.identity);
+    //         dataBall.transform.SetParent(dotContainer);
+    //         dataBall.name = $"DataBall {r.year}, {r.rate}";
+    //     }
+    // }
 
     void GenerateRamp() 
     {
@@ -198,7 +196,7 @@ public class LoadUSData : MonoBehaviour
 
                 combine = new CombineInstance(); 
                 combine.mesh = BuildRampMesh();
-                combines.Add(combine);    
+                combines.Add(combine);
 
                 // If this is the last wall, build the End join platform mesh:
                 if (i == walls.Length - 1 && j == wall.Count - 1)
@@ -208,22 +206,26 @@ public class LoadUSData : MonoBehaviour
                     combine = new CombineInstance();
                     combine.mesh = BuildRampMesh();
                     combines.Add(combine);
-                }            
+                }    
             }
 
             Mesh combinedMesh = new Mesh();
             combinedMesh.name = $"RampMesh_Wall{i}";
             combinedMesh.CombineMeshes(combines.ToArray(), true, false);
+            combinedMesh.RecalculateNormals();
 
             // Create a new Game Object to hold the combined target object
             GameObject combinedRamp = new GameObject();
             combinedRamp.name = $"Ramp_Wall{i}";
+            combinedRamp.tag = "ramp"; // TODO: Remove tag (not being used)
 
             // Add mesh filter, renderer, and collider components
             combinedRamp.AddComponent<MeshFilter>().sharedMesh = combinedMesh;
             combinedRamp.AddComponent<MeshRenderer>().sharedMaterial = new Material(DotConnectionRampMaterial);
             MeshCollider collider = combinedRamp.AddComponent<MeshCollider>();
             collider.sharedMesh = combinedMesh;
+            collider.convex = true;
+            collider.tag = "ramp";
 
             // Transform GameObject to the correct wall i
             MapToWall(i, combinedRamp);
@@ -249,6 +251,12 @@ public class LoadUSData : MonoBehaviour
             0, 2, 1,
             2, 3, 1
         }, 0);
+        mesh.SetUVs(0, new List<Vector2>() { // For texture mapping
+            new Vector2(0, 0),
+            new Vector2(1, 0),
+            new Vector2(0, 1),
+            new Vector2(1, 1),
+        });
         vertex0 = vertexList[2];
         return mesh;
     }
@@ -278,5 +286,10 @@ public class LoadUSData : MonoBehaviour
                 Wall_4_Graph_Container.transform.localRotation = Tower_Wall_4_West.rotation;
                 break;
         } 
+    }
+
+    void Update()
+    {
+
     }
 }
