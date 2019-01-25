@@ -13,23 +13,15 @@ public class nextCountryAgent : MonoBehaviour
     // private string rampName;
     // public DirectedAgent directedAgent;
     GameObject fpc;
-
     Rigidbody rb;
-    GameObject RBCast;
-
     Transform dustStorm;
-
     Vector3 rbPreviousPos;
-
     public GameObject smallBoxPrefab;
 
     // Start is called before the first frame update
     void Start()
     {
         fpc = GameObject.Find("FPSController");
-        RBCast = GameObject.Find("RBCast");
-        rb = RBCast.GetComponent<Rigidbody>();
-
         dustStorm = GameObject.Find("DustStorm").transform;
 
         LoadNextCountry();
@@ -117,7 +109,7 @@ public class nextCountryAgent : MonoBehaviour
             float xLocalOffset = -2010f;
             float floatYear = ((xCoord - xShift) * xLocalRange) / graphWidth - xLocalOffset;
             year = (int)floatYear;
-        }
+        } else
 
         // Debug.Log(year);
         if (year != 0)
@@ -165,31 +157,6 @@ public class nextCountryAgent : MonoBehaviour
                     break; // Is this break really working the way I think it is? 
                 }
             }
-            // Vector3 rbCastPos = new Vector3(50, yCoord - 10f, -50);
-            // RBCast.transform.SetPositionAndRotation(rbCastPos, Quaternion.Euler(0,0,180));
-            // rbPreviousPos = rbCastPos;
-
-            // // Declare a raycast hit to store information about what our raycast has hit
-            // RaycastHit[] hits = rb.SweepTestAll(-RBCast.transform.up, 100f);
-            // if (hits.Length != 0)
-            // {
-            //     foreach (RaycastHit hit in hits)
-            //     {
-            //         if (hit.collider.tag == "ramp")
-            //         {
-            //             Debug.Log("a hit!");
-            //             // directedAgent.MoveToLocation(hit.point);
-            //             GameObject hitPoint = Instantiate(smallBoxPrefab, hit.point + Vector3.up * 3, Quaternion.identity);
-            //             hitPoint.tag = "box";
-
-            //             break;
-            //         }
-            //     }
-
-            // } else {
-            // // Make sure the rigidbody doesn't fall!
-            // RBCast.transform.SetPositionAndRotation(rbPreviousPos, Quaternion.Euler(0,0,180));
-            // }
         }
     }
 

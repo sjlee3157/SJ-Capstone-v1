@@ -115,7 +115,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // TODO: force character to "slide" along edge using vector components?
             else
             {
-                Debug.Log("Oops, can't move!");
                 m_MoveDir.x = 0f;
                 m_MoveDir.z = 0f;
             }
