@@ -5,18 +5,15 @@ using UnityEngine;
 public class nextCountryAgent : MonoBehaviour
 {
     // Loading next country
-    // List<AgentDataRow> agentDataRows = new List<AgentDataRow>();
-    
     Dictionary<int,float> rateDictionary = new Dictionary<int,float>();
     Dictionary<int,string> countryDictionary = new Dictionary<int,string>();
 
-    // private string rampName;
-    // public DirectedAgent directedAgent;
     GameObject fpc;
-    Rigidbody rb;
     Transform dustStorm;
-    Vector3 rbPreviousPos;
     public GameObject smallBoxPrefab;
+
+    float xShift = 15f;
+    float graphWidth = 70f;
 
     // Start is called before the first frame update
     void Start()
@@ -63,12 +60,7 @@ public class nextCountryAgent : MonoBehaviour
 
         int year = 0;
         float agentRate;
-
-        float xShift = 15f;
-        float graphWidth = 70f;
-
         // If it's on a corner
-
         if (xFPC <= 15f && zFPC >= -15f) // Corner 1
         {
             year = 1980;
@@ -109,17 +101,14 @@ public class nextCountryAgent : MonoBehaviour
             float xLocalOffset = -2010f;
             float floatYear = ((xCoord - xShift) * xLocalRange) / graphWidth - xLocalOffset;
             year = (int)floatYear;
-        } else
+        }
 
-        // Debug.Log(year);
         if (year != 0)
         {
             if (year > 2018)
             { 
                 year = 2018;
             }
-
-            Debug.Log(year);
 
             agentRate = rateDictionary[year];
 
@@ -133,8 +122,6 @@ public class nextCountryAgent : MonoBehaviour
             {
                 agentRate = MaxRate;
             }
-
-            // Debug.Log(agentRate);
 
             float yCoord = ((agentRate + yOffset) / yRange) * graphHeight;
 
@@ -154,16 +141,10 @@ public class nextCountryAgent : MonoBehaviour
                 {
                     GameObject newBox = Instantiate(smallBoxPrefab, hit.point + Vector3.up * 3, Quaternion.identity);
                     newBox.tag = "box";
-                    break; // Is this break really working the way I think it is? 
+                    break;
                 }
             }
         }
-    }
-
-    int LookUpWall(int year)
-    {
-        int wall = ((year-1980)-1)/10;
-        return wall;
     }
 }
 
