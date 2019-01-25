@@ -10,16 +10,18 @@ public class nextCountryAgent : MonoBehaviour
     Dictionary<int,float> rateDictionary = new Dictionary<int,float>();
     Dictionary<int,string> countryDictionary = new Dictionary<int,string>();
 
-    private string rampName;
-    public DirectedAgent directedAgent;
+    // private string rampName;
+    // public DirectedAgent directedAgent;
     GameObject fpc;
 
     Rigidbody rb;
     GameObject RBCast;
 
+    Transform dustStorm;
+
     Vector3 rbPreviousPos;
 
-    public GameObject DataBallPrefab;
+    public GameObject smallBoxPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +29,8 @@ public class nextCountryAgent : MonoBehaviour
         fpc = GameObject.Find("FPSController");
         RBCast = GameObject.Find("RBCast");
         rb = RBCast.GetComponent<Rigidbody>();
+
+        dustStorm = GameObject.Find("DustStorm").transform;
 
         LoadNextCountry();
     }
@@ -123,6 +127,8 @@ public class nextCountryAgent : MonoBehaviour
                 year = 2018;
             }
 
+            Debug.Log(year);
+
             agentRate = rateDictionary[year];
 
             // TODO: grab this directly from class instance
@@ -139,32 +145,52 @@ public class nextCountryAgent : MonoBehaviour
             // Debug.Log(agentRate);
 
             float yCoord = ((agentRate + yOffset) / yRange) * graphHeight;
-            Vector3 rbCastPos = new Vector3(50, yCoord, -50);
-            // set rb.transform.y position
-            RBCast.transform.SetPositionAndRotation(rbCastPos, Quaternion.Euler(0,0,180));
-            rbPreviousPos = rbCastPos;
 
-            // Declare a raycast hit to store information about what our raycast has hit
-            RaycastHit[] hits = rb.SweepTestAll(-RBCast.transform.up, 100f);
-            if (hits.Length != 0)
+            // Set the transform of the duststorm
+            Vector3 newStormPos = dustStorm.position;
+            newStormPos.y = yCoord - 5f; // Offset for the height of the storm
+            dustStorm.SetPositionAndRotation(newStormPos, Quaternion.identity);
+
+            // Spew out the boxes
+            for (int zCoord = 0; zCoord >= -100; zCoord--)
             {
-                foreach (RaycastHit hit in hits)
+                // TODO: set layer to layer 9
+                int layerMask = 9;
+                Vector3 rayOrigin = new Vector3(0, yCoord, zCoord);
+                // Raycast
+                RaycastHit hit;
+                if (Physics.Raycast(rayOrigin, Vector3.forward, out hit, 100f, layerMask))
                 {
-                    if (hit.collider.tag != "box")
-                    {
-                        Debug.Log("a hit!");
-                        // directedAgent.MoveToLocation(hit.point);
-                        GameObject hitPoint = Instantiate(DataBallPrefab, hit.point + Vector3.up * 3, Quaternion.identity);
-                        hitPoint.tag = "box";
-
-                        break;
-                    }
+                    GameObject newBox = Instantiate(smallBoxPrefab, hit.point + Vector3.up * 3, Quaternion.identity);
+                    newBox.tag = "box";
+                    break; 
                 }
-                
             }
-        } else {
-            // Make sure the rigidbody doesn't fall!
-            RBCast.transform.SetPositionAndRotation(rbPreviousPos, Quaternion.Euler(0,0,180));
+            // Vector3 rbCastPos = new Vector3(50, yCoord - 10f, -50);
+            // RBCast.transform.SetPositionAndRotation(rbCastPos, Quaternion.Euler(0,0,180));
+            // rbPreviousPos = rbCastPos;
+
+            // // Declare a raycast hit to store information about what our raycast has hit
+            // RaycastHit[] hits = rb.SweepTestAll(-RBCast.transform.up, 100f);
+            // if (hits.Length != 0)
+            // {
+            //     foreach (RaycastHit hit in hits)
+            //     {
+            //         if (hit.collider.tag == "ramp")
+            //         {
+            //             Debug.Log("a hit!");
+            //             // directedAgent.MoveToLocation(hit.point);
+            //             GameObject hitPoint = Instantiate(smallBoxPrefab, hit.point + Vector3.up * 3, Quaternion.identity);
+            //             hitPoint.tag = "box";
+
+            //             break;
+            //         }
+            //     }
+
+            // } else {
+            // // Make sure the rigidbody doesn't fall!
+            // RBCast.transform.SetPositionAndRotation(rbPreviousPos, Quaternion.Euler(0,0,180));
+            // }
         }
     }
 

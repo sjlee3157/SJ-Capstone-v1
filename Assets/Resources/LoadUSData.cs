@@ -27,7 +27,7 @@ public class LoadUSData : MonoBehaviour
     float xLocalRange;
 
     // Prefabs, Materials, etc.
-    [SerializeField] private Material DotConnectionRampMaterial;
+    public Material DotConnectionRampMaterial;
 
     // Showing graph
     float xCoord;
@@ -218,13 +218,15 @@ public class LoadUSData : MonoBehaviour
             GameObject combinedRamp = new GameObject();
             combinedRamp.name = $"Ramp_Wall{i}";
             combinedRamp.tag = "ramp"; // TODO: Remove tag (not being used)
+            // TODO: Set layer to 9
+            combinedRamp.layer = 9;
 
             // Add mesh filter, renderer, and collider components
             combinedRamp.AddComponent<MeshFilter>().sharedMesh = combinedMesh;
             combinedRamp.AddComponent<MeshRenderer>().sharedMaterial = new Material(DotConnectionRampMaterial);
             MeshCollider collider = combinedRamp.AddComponent<MeshCollider>();
             collider.sharedMesh = combinedMesh;
-            collider.convex = true;
+            // collider.convex = true; // This causes issues! Ack! But I need it for the RigidBodyScan!
             collider.tag = "ramp";
 
             // Transform GameObject to the correct wall i
