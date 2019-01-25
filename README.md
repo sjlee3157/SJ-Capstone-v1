@@ -1,7 +1,7 @@
 # README
 
 TheTower0.4. 
-// a first-person  data visualization flash game about the US prison system. 
+// a first-person data visualization Unity/WebGL game about the US prison system. 
 
 Data scraped from http://www.prisonstudies.org.  
 https://github.com/sjlee3157/prison-data-scraper. 
