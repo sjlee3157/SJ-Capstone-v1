@@ -1,7 +1,7 @@
 # README
 
 TheTower0.4.   
-// is an experimental first-person data visualization Unity/WebGL game prototype about the US prison system. 
+// is an experimental first-person data visualization Unity/WebGL game prototype about the US prison system.   
 // is explorable game architecture generated from data scraped Jan 2019 at http://www.prisonstudies.org.  
 // is a capstone project for [adadevelopersacademy](https://github.com/Ada-Developers-Academy) cohort 10, seattle, unceded duwamish territory. 
 
