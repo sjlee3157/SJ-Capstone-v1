@@ -1,9 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class LoadUSData : MonoBehaviour
 {
+    // Text Meshes at corners
+    [SerializeField] private GameObject[] cornerTexts;
+
     // Loading CSV data
     List<DataRow> dataRows = new List<DataRow>();
     List<DataRow>[] walls; // Array of DataRow lists grouped by wall
@@ -67,6 +71,7 @@ public class LoadUSData : MonoBehaviour
         SetGlobalScale();
         WallifyData();
         GenerateRamp();
+        SetTexts();
     }
 
     void LoadData() 
@@ -290,8 +295,58 @@ public class LoadUSData : MonoBehaviour
         } 
     }
 
-    void Update()
+    void SetTexts()
     {
+        for (int i = 0; i < walls.Length; i++)
+        {
+            List<DataRow> wall = walls[i];
+            int year = wall[wall.Count - 1].year;
 
+            int textIndex = i;
+            GameObject cornerText = cornerTexts[textIndex];
+            TextMeshPro textmeshPro = cornerText.GetComponent<TextMeshPro>();
+            textmeshPro.SetText("{0}", year);
+
+            // Set Text Y Position
+            // Raycast at a calculated spot (couldn't get this to work :()
+
+            // Get original position
+            // Vector3 originalTextPos = cornerText.transform.position;
+
+            // // int layerMask = 9;
+            // Vector3 rayOrigin = originalTextPos; 
+            // // rayOrigin.x += 1;
+            // // rayOrigin.z += 1;
+            // // Raycast
+            // RaycastHit[] hits = Physics.SphereCastAll(rayOrigin, 10f, Vector3.down, 85f);
+            // if (hits.Length == 0)
+            // {
+            //     Debug.Log(i);
+            //     Debug.Log("no hits!");
+            // } else
+            // {
+            //     foreach (RaycastHit hit in hits)
+            //     {
+            //         if (hit.collider.tag == "ramp")
+            //         {
+            //             Debug.Log(i);
+            //             Debug.Log("YASSSSSSS A hit!");
+            //             Debug.Log(hit.collider.name);
+            //             Debug.Log(hit.point.y);
+            //             Quaternion textRot = cornerText.transform.rotation;
+            //             // Vector3 newTextPos = originalTextPos;
+            //             // newTextPos.y = hit.point.y;
+            //             cornerText.transform.SetPositionAndRotation(new Vector3(originalTextPos.x, hit.point.y, originalTextPos.z), textRot);
+            //             break;
+            //         }
+            //         else
+            //         {
+            //             // Debug.Log(i);
+            //             // Debug.Log(originalTextPos);
+            //             // Debug.Log("hit but not ramp!");
+            //         }
+            //     }
+            // }
+        }
     }
 }

@@ -154,7 +154,6 @@ public class nextCountryAgent : MonoBehaviour
             // Spew out the boxes
             for (int zCoord = 0; zCoord >= -100; zCoord--)
             {
-                // TODO: set layer to layer 9
                 int layerMask = 9;
                 Vector3 rayOrigin = new Vector3(0, yCoord, zCoord);
                 // Raycast
@@ -163,7 +162,7 @@ public class nextCountryAgent : MonoBehaviour
                 {
                     GameObject newBox = Instantiate(smallBoxPrefab, hit.point + Vector3.up * 3, Quaternion.identity);
                     newBox.tag = "box";
-                    break; 
+                    break; // Is this break really working the way I think it is? 
                 }
             }
             // Vector3 rbCastPos = new Vector3(50, yCoord - 10f, -50);
