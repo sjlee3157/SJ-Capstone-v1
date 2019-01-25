@@ -1,16 +1,14 @@
 # README
 
-TheTower0.4. 
-// a first-person data visualization Unity/WebGL game prototype about the US prison system. 
-// capstone for adadevelopersacademy cohort 10, seattle, unceded duwamish territory
-// https://github.com/Ada-Developers-Academy
+TheTower0.4.   
+// is an experimental first-person data visualization Unity/WebGL game prototype about the US prison system. 
+// is explorable game architecture generated from data scraped Jan 2019 at http://www.prisonstudies.org.  
+// is a capstone project for [adadevelopersacademy](https://github.com/Ada-Developers-Academy) cohort 10, seattle, unceded duwamish territory. 
 
-Game architecture generated from data scraped Jan 2019 at http://www.prisonstudies.org.  
-https://github.com/sjlee3157/prison-data-scraper. 
+// view raw data and methods https://github.com/sjlee3157/prison-data-scraper.   
+// play on itch.io at https://rahwhoneyrockdad.itch.io/thetower.  
 
-Play on itch.io at https://rahwhoneyrockdad.itch.io/thetower.
-
-~~**Spoilers!**~~
+~~*~**Spoilers!**~*~~
 
 The graph represents the US prison rate, 1980-2016.  
 The height (y-axis) of the red cloud represents the highest global prison rate (besides the US) in the year of the player's current position on the graph.  
